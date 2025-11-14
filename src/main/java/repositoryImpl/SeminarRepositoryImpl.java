@@ -26,26 +26,26 @@ public class SeminarRepositoryImpl implements SeminarRepository {
     @Override
     public List<Seminar> findAll() {
         List<Seminar> listSeminar = new ArrayList<>();
-                String sql = "SELECT * FROM seminar";
-                try (Connection conn = ds.getConnection();
-                     PreparedStatement ps = conn.prepareStatement(sql);
-                     ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        Seminar s = new Seminar();
-                        s.setId(rs.getInt("id"));
-                        s.setName(rs.getString("name"));
-                        s.setDescription(rs.getString("description"));
-                        LocalDateTime startDate = rs.getObject("start_date", LocalDateTime.class);
-                        s.setStart_date(startDate);
-                        LocalDateTime endDate = rs.getObject("end_date", LocalDateTime.class);
-                        s.setEnd_date(endDate);
-                        s.setLocation(rs.getString("location"));
-                        s.setSpeaker(rs.getString("speaker"));
-                        s.setCategoryId(rs.getInt("category_id"));
-                        s.setMaxAttendance(rs.getInt("max_attendees"));
-                        s.setStatus(rs.getString("status"));
-                        s.setImage(rs.getString("image_url"));
-                        listSeminar.add(s);
+        String sql = "SELECT * FROM seminar";
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Seminar s = new Seminar();
+                s.setId(rs.getInt("id"));
+                s.setName(rs.getString("name"));
+                s.setDescription(rs.getString("description"));
+                LocalDateTime startDate = rs.getObject("start_date", LocalDateTime.class);
+                s.setStart_date(startDate);
+                LocalDateTime endDate = rs.getObject("end_date", LocalDateTime.class);
+                s.setEnd_date(endDate);
+                s.setLocation(rs.getString("location"));
+                s.setSpeaker(rs.getString("speaker"));
+                s.setCategoryId(rs.getInt("category_id"));
+                s.setMaxAttendance(rs.getInt("max_attendees"));
+                s.setStatus(rs.getString("status"));
+                s.setImage(rs.getString("image_url"));
+                listSeminar.add(s);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -242,7 +242,7 @@ public class SeminarRepositoryImpl implements SeminarRepository {
         String baseSql = "SELECT seminar.*, category.categoryName\n" +
                 "FROM seminar\n" +
                 "JOIN category ON seminar.category_id = category.id";
-        String whereSql = " WHERE (seminar.name LIKE ? OR seminar.speaker LIKE ? OR category.categoryName LIKE ?)";
+        String whereSql = " WHERE (seminar.name LIKE ? OR seminar.speaker LIKE ? OR seminar.location LIKE ? OR category.categoryName LIKE ?)";
         String order = "desc".equalsIgnoreCase(pageRequest.getOrderField()) ? "DESC" : "ASC";
         String sql = baseSql + whereSql + " ORDER BY " + pageRequest.getSortField() + " " + order + " LIMIT ? OFFSET ?";
 
@@ -253,9 +253,10 @@ public class SeminarRepositoryImpl implements SeminarRepository {
 
             ps.setString(1, keyword); // Cho name LIKE ?
             ps.setString(2, keyword);// Cho speaker LIKE ?
-            ps.setString(3, keyword); // cho name category
-            ps.setInt(4, pageRequest.getPageSize());
-            ps.setInt(5, pageRequest.getOffset());
+            ps.setString(3, keyword); // cho location
+            ps.setString(4, keyword); // cho ategoryName
+            ps.setInt(5, pageRequest.getPageSize());
+            ps.setInt(6, pageRequest.getOffset());
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -289,7 +290,7 @@ public class SeminarRepositoryImpl implements SeminarRepository {
         String baseSql = "FROM seminar " +
                 "JOIN category ON seminar.category_id = category.id";
 
-        String whereSql = " WHERE (seminar.name LIKE ? OR seminar.speaker LIKE ? OR category.categoryName LIKE ?)";
+        String whereSql = " WHERE (seminar.name LIKE ? OR seminar.speaker LIKE ? OR seminar.location LIKE ? OR category.categoryName LIKE ?)";
 
         String sql = "SELECT COUNT(*) " + baseSql + whereSql;
 
@@ -300,7 +301,8 @@ public class SeminarRepositoryImpl implements SeminarRepository {
 
             ps.setString(1, keywordSearch); // Cho seminar.name
             ps.setString(2, keywordSearch); // Cho seminar.speaker
-            ps.setString(3, keywordSearch); // Cho category.categoryName
+            ps.setString(3, keywordSearch); // Cho seminar.location
+            ps.setString(4, keywordSearch); // Cho category.categoryName
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
