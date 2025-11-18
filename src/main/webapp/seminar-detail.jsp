@@ -35,10 +35,22 @@
                     <h6 class="m-0 font-weight-bold text-primary">Banner Hội thảo</h6>
                 </div>
                 <div class="card-body text-center">
+                    <%
+                        if (seminar != null && seminar.getImage() != null && !seminar.getImage().isEmpty()) {
+                    %>
+                        <img id="immage" class="image" src="<%= request.getContextPath() + "/" + seminar.getImage()%>"
+                             style="width: 100%; height: auto; border-radius: 0.25rem; border: 1px solid #ddd; margin-top: 10px;">
+                    <%
+                        }else{
+                    %>
                     <img class="img-fluid rounded"
                          src="https://placehold.co/800x400?text=No+Banner"
                          alt="Banner Hội thảo"
+                         style="width: 100%; height: auto; border-radius: 0.25rem; border: 1px solid #ddd; margin-top: 10px;"
                          onerror="this.src='https://placehold.co/800x400/E8E8E8/999?text=Image+Error';">
+                    <%
+                        }
+                    %>
                 </div>
             </div>
 

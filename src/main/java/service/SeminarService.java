@@ -17,4 +17,5 @@ public interface SeminarService {
     Seminar create(Seminar seminar);
     boolean update(Seminar seminar);
     boolean delete(int id);
+    int countUpcomingSeminars();
 }

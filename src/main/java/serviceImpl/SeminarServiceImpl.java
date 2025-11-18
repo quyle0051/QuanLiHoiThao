@@ -62,4 +62,9 @@ public class SeminarServiceImpl implements SeminarService {
     public boolean delete(int id) {
         return seminarRepository.delete(id);
     }
+
+    @Override
+    public int countUpcomingSeminars() {
+        return seminarRepository.countUpcomingSeminars();
+    }
 }

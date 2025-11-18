@@ -9,4 +9,5 @@ import java.util.List;
 public interface SeminarRepository extends Repository<Seminar>{
     List<SeminarDTO> findAllToDTO(PageRequest pageRequest);
     int count(String keyword);
+    int countUpcomingSeminars();
 }

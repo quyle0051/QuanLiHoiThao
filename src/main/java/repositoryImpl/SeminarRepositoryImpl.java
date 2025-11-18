@@ -315,4 +315,20 @@ public class SeminarRepositoryImpl implements SeminarRepository {
         }
         return 0;
     }
+
+    @Override
+    public int countUpcomingSeminars() {
+        String sql = "SELECT COUNT(*) FROM seminar WHERE start_date > NOW()";
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
 }
